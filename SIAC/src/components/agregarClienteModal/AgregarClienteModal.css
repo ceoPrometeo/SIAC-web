@@ -1,0 +1,63 @@
+/* 🟣 Modal personalizado */
+.modal-content {
+  border-radius: 12px;
+  border: none;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+/* 🔹 Encabezado del modal */
+.modal-header {
+  background-color: #422754;
+  color: white;
+  border-bottom: none;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+}
+
+/* 📝 Título */
+.modal-title {
+  font-weight: 600;
+  font-size: 1.25rem;
+}
+
+/* 🔸 Cuerpo del modal */
+.modal-body {
+  background-color: #fdfdfd;
+  padding: 1.5rem;
+}
+
+/* 🧾 Inputs */
+.modal-body .form-control {
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  transition: border-color 0.2s ease-in-out;
+}
+
+.modal-body .form-control:focus {
+  border-color: #422754;
+  box-shadow: 0 0 0 0.2rem rgba(66, 39, 84, 0.25);
+}
+
+/* 🔘 Footer del modal */
+.modal-footer {
+  background-color: #f0f0f0;
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
+  border-top: none;
+  padding: 1rem 1.5rem;
+}
+
+/* 🎯 Botones */
+.modal-footer .btn {
+  padding: 0.5rem 1.25rem;
+  border-radius: 8px;
+}
+
+.modal-footer .btn-primary {
+  background-color: #422754;
+  border: none;
+}
+
+.modal-footer .btn-primary:hover {
+  background-color: #341d44;
+}

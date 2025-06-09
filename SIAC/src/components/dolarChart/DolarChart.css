@@ -1,0 +1,39 @@
+/* src/components/dolarChart/DolarChart.css */
+
+/* Contenedor principal de la tarjeta de la gráfica */
+.dolar-chart-container {
+  position: relative;
+  background: #f9f9f9;
+  padding: 1rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  height: 280px; /* Tamaño fijo para evitar desborde */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* Valor actual en la esquina superior derecha */
+.valor-actual {
+    
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  background-color: #007bff;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 2px;
+  z-index: 10;
+}
+
+/* Mensajes de error o carga */
+.dolar-error,
+.dolar-loading {
+  text-align: center;
+  padding: 2rem;
+  background-color: #999;
+  color: white;
+  border-radius: 10px;
+}

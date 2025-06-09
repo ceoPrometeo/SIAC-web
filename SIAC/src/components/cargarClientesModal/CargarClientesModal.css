@@ -1,0 +1,47 @@
+/* CargarClientesModal.css */
+
+.modal-content {
+  border-radius: 10px;
+  padding: 10px;
+}
+
+.modal-header {
+  background-color: #422754;
+  color: white;
+  border-bottom: none;
+  border-radius: 10px 10px 0 0;
+}
+
+.modal-title {
+  font-weight: 600;
+  font-size: 1.2rem;
+}
+
+.modal-body {
+  padding-top: 10px;
+}
+
+.modal-footer {
+  border-top: none;
+  justify-content: flex-end;
+}
+
+button.btn-primary {
+  background-color: #422754;
+  border: none;
+}
+
+button.btn-primary:hover {
+  background-color: #5a3b6e;
+}
+
+.archivo-nombre {
+  font-size: 0.85rem;
+  margin-top: 0.5rem;
+  color: #333;
+}
+.archivo-nombre {
+  font-size: 0.9rem;
+  color: #555;
+  margin-top: 5px;
+}
