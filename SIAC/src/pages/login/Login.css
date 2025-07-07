@@ -1,0 +1,90 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.login-wrapper {
+  height: 100vh;
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+}
+
+.login-header {
+  position: relative;
+  width: 100vw;
+  height: 60px;
+  background-color: #999999;
+  overflow: hidden;
+}
+
+.franja-claro {
+  position: absolute;
+  top: 0;
+  right: 70px;
+  width: 90px;
+  height: 100%;
+  background-color: #e8e8e8;
+  transform: skewX(-40deg);
+}
+
+.franja-morado {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 90px;
+  height: 100%;
+  background-color: #3d1766;
+  transform: skewX(-40deg);
+}
+
+.login-content {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-box {
+  background-color: #d9d9d9;
+  padding: 3rem 2.5rem;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  width: 340px;
+  text-align: center;
+}
+
+.login-title {
+  font-size: 1.6rem;
+  color: #3d1766;
+  font-weight: bold;
+  margin-bottom: 2rem;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.login-input {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  margin-bottom: 1rem;
+  border: none;
+  border-radius: 8px;
+  background-color: #e8eeee;
+  font-size: 0.9rem;
+}
+
+.login-button {
+  width: 100%;
+  padding: 0.6rem;
+  background-color: #3d1766;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
+.login-button:hover {
+  background-color: #2a0f4a;
+}
