@@ -1,23 +1,35 @@
-// src/pages/Vencidos.jsx
 import React, { useState } from "react";
+import Swal from "sweetalert2";
 import "bulma/css/bulma.min.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import "./Vencidos.css";
-import eyeIcon from "../../assets/eye.png";
-import editIcon from "../../assets/edit.png";
 import warningRedIcon from "../../assets/warning-red.png";
 
 export default function Vencidos() {
-  const [clientes, setClientes] = useState([
+  const [clientes] = useState([
     { id: 1, nombre: "Josiah Galilea", monto: 1085.78, fecha: "2024-05-15", activo: false },
   ]);
 
-  const toggleActivo = (id) => {
-    const actualizados = clientes.map((c) =>
-      c.id === id ? { ...c, activo: !c.activo } : c
-    );
-    setClientes(actualizados);
+  const manejarRenovacion = (cliente) => {
+    Swal.fire({
+      title: `¿Estás seguro de renovar al cliente ${cliente.nombre}?`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#6A5ACD",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Sí, renovar",
+      cancelButtonText: "Cancelar",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        Swal.fire({
+          title: "¡Felicidades!",
+          text: "Tu cliente se ha renovado.",
+          icon: "success",
+          confirmButtonColor: "#6A5ACD",
+        });
+      }
+    });
   };
 
   return (
@@ -37,7 +49,6 @@ export default function Vencidos() {
                 <th>Monto</th>
                 <th>Fecha Renovación</th>
                 <th>Estado</th>
-                <th className="text-center">Acciones</th>
               </tr>
             </thead>
             <tbody>
@@ -54,25 +65,9 @@ export default function Vencidos() {
                         alt="Vencido"
                         title="Vencido"
                         className="estado-renovado-icon-table"
+                        onClick={() => manejarRenovacion(cliente)}
+                        style={{ cursor: "pointer" }}
                       />
-                    </div>
-                  </td>
-                  <td>
-                    <div className="d-flex justify-content-center gap-2">
-                      <button className="btn btn-sm" title="Ver">
-                        <img src={eyeIcon} alt="Ver" style={{ width: "18px" }} />
-                      </button>
-                      <button className="btn btn-sm" title="Editar">
-                        <img src={editIcon} alt="Editar" style={{ width: "18px" }} />
-                      </button>
-                      <div className="form-check form-switch m-0">
-                        <input
-                          className="form-check-input"
-                          type="checkbox"
-                          checked={cliente.activo}
-                          onChange={() => toggleActivo(cliente.id)}
-                        />
-                      </div>
                     </div>
                   </td>
                 </tr>
