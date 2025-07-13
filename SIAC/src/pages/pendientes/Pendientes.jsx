@@ -1,24 +1,37 @@
-// src/pages/Pendientes.jsx
 import React, { useState } from "react";
+import Swal from "sweetalert2";
 import "bulma/css/bulma.min.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import "./Pendientes.css";
-import eyeIcon from "../../assets/eye.png";
-import editIcon from "../../assets/edit.png";
 import warningIcon from "../../assets/warning.png";
 
 export default function Pendientes() {
   const [clientes, setClientes] = useState([
     { id: 1, nombre: "Luis Domínguez", monto: 961.97, fecha: "2024-06-01", activo: true },
-    { id: 2, nombre: "Silvia Bravo", monto: 1100.00, fecha: "2024-06-15", activo: true },
+    { id: 2, nombre: "Silvia Bravo", monto: 1100.0, fecha: "2024-06-15", activo: true },
   ]);
 
-  const toggleActivo = (id) => {
-    const actualizados = clientes.map((c) =>
-      c.id === id ? { ...c, activo: !c.activo } : c
-    );
-    setClientes(actualizados);
+  const manejarRenovacion = (cliente) => {
+    Swal.fire({
+      title: "¿Estás seguro de renovar el contrato?",
+      text: `Cliente: ${cliente.nombre}`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#6A5ACD",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Sí, renovar",
+      cancelButtonText: "Cancelar",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        Swal.fire({
+          title: "¡Felicidades!",
+          text: "Tu cliente se ha renovado.",
+          icon: "success",
+          confirmButtonColor: "#6A5ACD",
+        });
+      }
+    });
   };
 
   return (
@@ -38,7 +51,6 @@ export default function Pendientes() {
                 <th>Monto</th>
                 <th>Fecha Renovación</th>
                 <th>Estado</th>
-                <th className="text-center">Acciones</th>
               </tr>
             </thead>
             <tbody>
@@ -55,25 +67,9 @@ export default function Pendientes() {
                         alt="Pendiente"
                         title="Pendiente"
                         className="estado-renovado-icon-table"
+                        onClick={() => manejarRenovacion(cliente)}
+                        style={{ cursor: "pointer" }}
                       />
-                    </div>
-                  </td>
-                  <td>
-                    <div className="d-flex justify-content-center gap-2">
-                      <button className="btn btn-sm" title="Ver">
-                        <img src={eyeIcon} alt="Ver" style={{ width: "18px" }} />
-                      </button>
-                      <button className="btn btn-sm" title="Editar">
-                        <img src={editIcon} alt="Editar" style={{ width: "18px" }} />
-                      </button>
-                      <div className="form-check form-switch m-0">
-                        <input
-                          className="form-check-input"
-                          type="checkbox"
-                          checked={cliente.activo}
-                          onChange={() => toggleActivo(cliente.id)}
-                        />
-                      </div>
                     </div>
                   </td>
                 </tr>

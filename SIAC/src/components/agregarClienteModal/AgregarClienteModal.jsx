@@ -10,24 +10,26 @@ export default function AgregarClienteModal({ show, handleClose, onAgregar }) {
     monto: "",
     correo: "",
     telefono: "",
-    fecha: ""
+    fecha: "",
+    tipoContrato: "" // ← nuevo campo
   });
 
   const [errores, setErrores] = useState({});
 
   const handleChange = (e) => {
     setNuevoCliente({ ...nuevoCliente, [e.target.name]: e.target.value });
-    setErrores({ ...errores, [e.target.name]: false }); // elimina error al escribir
+    setErrores({ ...errores, [e.target.name]: false });
   };
 
   const handleSubmit = () => {
     const nuevosErrores = {};
-    const { cuenta, nombre, monto, fecha } = nuevoCliente;
+    const { cuenta, nombre, monto, fecha, tipoContrato } = nuevoCliente;
 
     if (!cuenta.trim()) nuevosErrores.cuenta = true;
     if (!nombre.trim()) nuevosErrores.nombre = true;
     if (!monto) nuevosErrores.monto = true;
     if (!fecha) nuevosErrores.fecha = true;
+    if (!tipoContrato) nuevosErrores.tipoContrato = true; // ← validación añadida
 
     if (Object.keys(nuevosErrores).length > 0) {
       setErrores(nuevosErrores);
@@ -54,7 +56,8 @@ export default function AgregarClienteModal({ show, handleClose, onAgregar }) {
       monto: "",
       correo: "",
       telefono: "",
-      fecha: ""
+      fecha: "",
+      tipoContrato: ""
     });
     setErrores({});
     handleClose();
@@ -126,6 +129,27 @@ export default function AgregarClienteModal({ show, handleClose, onAgregar }) {
               onChange={handleChange}
               placeholder="Ingrese teléfono"
             />
+          </Form.Group>
+
+          {/* ✅ Campo nuevo: Tipo de Contrato */}
+          <Form.Group className="mb-3">
+            <Form.Label>Tipo de Contrato *</Form.Label>
+            <div className="d-flex flex-wrap gap-3">
+              {["Agresivo", "Moderado", "Conservador", "Liquidity"].map((tipo) => (
+                <Form.Check
+                  key={tipo}
+                  type="radio"
+                  label={tipo}
+                  name="tipoContrato"
+                  id={`tipo-${tipo}`}
+                  value={tipo}
+                  checked={nuevoCliente.tipoContrato === tipo}
+                  onChange={handleChange}
+                  isInvalid={errores.tipoContrato}
+                />
+              ))}
+            </div>
+            {errores.tipoContrato && <div className="invalid-feedback d-block">Campo obligatorio</div>}
           </Form.Group>
 
           <Form.Group className="mb-3">
