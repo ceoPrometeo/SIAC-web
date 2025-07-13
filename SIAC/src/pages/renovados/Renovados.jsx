@@ -1,34 +1,52 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "bulma/css/bulma.min.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import "./Renovados.css";
-import checkIcon from "../../assets/check.png"; // ✅ Solo este ícono sigue en uso
+import checkIcon from "../../assets/check.png";
+
+const BASE_URL = "http://localhost:8080/api/cliente/contratos";
 
 export default function Renovados() {
-  const [clientes, setClientes] = useState([
-    {
-      id: 1,
-      nombre: "Marco Simone",
-      monto: 5816.48,
-      fecha: "2024-01-08",
-      activo: true,
-    },
-    {
-      id: 2,
-      nombre: "Blanca Gutiérrez",
-      monto: 25054.16,
-      fecha: "2024-01-10",
-      activo: true,
-    },
-    {
-      id: 3,
-      nombre: "David Ramírez",
-      monto: 4900,
-      fecha: "2024-03-05",
-      activo: true,
-    },
-  ]);
+  const [clientes, setClientes] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const token = localStorage.getItem("token");
+
+  useEffect(() => {
+    fetchClientesPorEstatus("RENOVADOS");
+  }, []);
+
+  const fetchClientesPorEstatus = async (estatus) => {
+    try {
+      setLoading(true);
+      const response = await fetch(
+        `${BASE_URL}/estatus?estatus=${estatus.toUpperCase()}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      const data = await response.json();
+
+      if (!data.error) {
+        const mapped = data.data.map((c) => ({
+          id: c.contratoId,
+          nombre: c.clienteNombre,
+          monto: c.monto,
+          fecha: c.fechaRenovacion,
+        }));
+        setClientes(mapped);
+      } else {
+        Swal.fire("Error", "No se pudieron obtener los clientes", "error");
+      }
+    } catch (err) {
+      Swal.fire("Error", "Hubo un error en la solicitud", "error");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <>
@@ -38,39 +56,44 @@ export default function Renovados() {
 
       <div className="tabla-clientes">
         <h5 className="mb-3">Listado de Renovados</h5>
-        <div className="table-responsive">
-          <table className="table table-hover table-striped align-middle">
-            <thead className="table-header-custom">
-              <tr>
-                <th>ID</th>
-                <th>Nombre</th>
-                <th>Monto</th>
-                <th>Fecha Renovación</th>
-                <th>Estado</th>
-              </tr>
-            </thead>
-            <tbody>
-              {clientes.map((cliente) => (
-                <tr key={cliente.id}>
-                  <td>{cliente.id}</td>
-                  <td>{cliente.nombre}</td>
-                  <td>${cliente.monto.toLocaleString()}</td>
-                  <td>{cliente.fecha}</td>
-                  <td>
-                    <div className="img-table">
-                      <img
-                        src={checkIcon}
-                        alt="Renovado"
-                        title="Renovado"
-                        className="estado-renovado-icon-table"
-                      />
-                    </div>
-                  </td>
+
+        {loading ? (
+          <p>Cargando...</p>
+        ) : (
+          <div className="table-responsive">
+            <table className="table table-hover table-striped align-middle">
+              <thead className="table-header-custom">
+                <tr>
+                  <th>ID</th>
+                  <th>Nombre</th>
+                  <th>Monto</th>
+                  <th>Fecha Renovación</th>
+                  <th>Estado</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {clientes.map((cliente) => (
+                  <tr key={cliente.id}>
+                    <td>{cliente.id}</td>
+                    <td>{cliente.nombre}</td>
+                    <td>${cliente.monto.toLocaleString()}</td>
+                    <td>{cliente.fecha}</td>
+                    <td>
+                      <div className="img-table">
+                        <img
+                          src={checkIcon}
+                          alt="Renovado"
+                          title="Renovado"
+                          className="estado-renovado-icon-table"
+                        />
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
     </>
   );
