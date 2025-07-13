@@ -1,35 +1,88 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import "bulma/css/bulma.min.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import "./Pendientes.css";
 import warningIcon from "../../assets/warning.png";
+import checkIcon from "../../assets/check.png";
+
+const BASE_URL = "http://localhost:8080/api/cliente/contratos";
 
 export default function Pendientes() {
-  const [clientes, setClientes] = useState([
-    { id: 1, nombre: "Luis Domínguez", monto: 961.97, fecha: "2024-06-01", activo: true },
-    { id: 2, nombre: "Silvia Bravo", monto: 1100.0, fecha: "2024-06-15", activo: true },
-  ]);
+  const [clientes, setClientes] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const manejarRenovacion = (cliente) => {
+  const token = localStorage.getItem("token");
+
+  useEffect(() => {
+    fetchClientesPorEstatus("PENDIENTES");
+  }, []);
+
+  const fetchClientesPorEstatus = async (estatus) => {
+    try {
+      setLoading(true);
+      const response = await fetch(
+        `${BASE_URL}/estatus?estatus=${estatus.toUpperCase()}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      const data = await response.json();
+
+      if (!data.error) {
+        const mapped = data.data.map((c) => ({
+          id: c.contratoId,
+          nombre: c.clienteNombre,
+          monto: c.monto,
+          fecha: c.fechaRenovacion,
+          renovado: c.estatusRenovacion === "RENOVADOS",
+        }));
+        setClientes(mapped);
+      } else {
+        Swal.fire("Error", "No se pudieron obtener los clientes", "error");
+      }
+    } catch (err) {
+      Swal.fire("Error", "Hubo un error en la solicitud", "error");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const manejarRenovacion = async (id) => {
     Swal.fire({
-      title: "¿Estás seguro de renovar el contrato?",
-      text: `Cliente: ${cliente.nombre}`,
+      title: `¿Estás seguro de renovar este contrato?`,
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#6A5ACD",
       cancelButtonColor: "#d33",
       confirmButtonText: "Sí, renovar",
       cancelButtonText: "Cancelar",
-    }).then((result) => {
+    }).then(async (result) => {
       if (result.isConfirmed) {
-        Swal.fire({
-          title: "¡Felicidades!",
-          text: "Tu cliente se ha renovado.",
-          icon: "success",
-          confirmButtonColor: "#6A5ACD",
-        });
+        try {
+          const res = await fetch(
+            `${BASE_URL}/${id}/cambiar-estatus?nuevoEstatus=RENOVADOS`,
+            {
+              method: "PUT",
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+          if (res.ok) {
+            setClientes((prev) =>
+              prev.map((c) => (c.id === id ? { ...c, renovado: true } : c))
+            );
+            Swal.fire("¡Felicidades!", "El contrato fue renovado.", "success");
+          } else {
+            Swal.fire("Error", "No se pudo cambiar el estado", "error");
+          }
+        } catch (err) {
+          Swal.fire("Error", "Hubo un error al cambiar el estado", "error");
+        }
       }
     });
   };
@@ -42,41 +95,48 @@ export default function Pendientes() {
 
       <div className="tabla-clientes">
         <h5 className="mb-3">Listado de Pendientes</h5>
-        <div className="table-responsive">
-          <table className="table table-hover table-striped align-middle">
-            <thead className="table-header-custom">
-              <tr>
-                <th>ID</th>
-                <th>Nombre</th>
-                <th>Monto</th>
-                <th>Fecha Renovación</th>
-                <th>Estado</th>
-              </tr>
-            </thead>
-            <tbody>
-              {clientes.map((cliente) => (
-                <tr key={cliente.id}>
-                  <td>{cliente.id}</td>
-                  <td>{cliente.nombre}</td>
-                  <td>${cliente.monto.toLocaleString()}</td>
-                  <td>{cliente.fecha}</td>
-                  <td>
-                    <div className="img-table">
-                      <img
-                        src={warningIcon}
-                        alt="Pendiente"
-                        title="Pendiente"
-                        className="estado-renovado-icon-table"
-                        onClick={() => manejarRenovacion(cliente)}
-                        style={{ cursor: "pointer" }}
-                      />
-                    </div>
-                  </td>
+
+        {loading ? (
+          <p>Cargando...</p>
+        ) : (
+          <div className="table-responsive">
+            <table className="table table-hover table-striped align-middle">
+              <thead className="table-header-custom">
+                <tr>
+                  <th>ID</th>
+                  <th>Nombre</th>
+                  <th>Monto</th>
+                  <th>Fecha Renovación</th>
+                  <th>Estado</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {clientes.map((cliente) => (
+                  <tr key={cliente.id}>
+                    <td>{cliente.id}</td>
+                    <td>{cliente.nombre}</td>
+                    <td>${cliente.monto.toLocaleString()}</td>
+                    <td>{cliente.fecha}</td>
+                    <td>
+                      <div className="img-table">
+                        <img
+                          src={cliente.renovado ? checkIcon : warningIcon}
+                          alt={cliente.renovado ? "Renovado" : "Pendiente"}
+                          title={cliente.renovado ? "Renovado" : "Pendiente"}
+                          className="estado-renovado-icon-table"
+                          onClick={() =>
+                            !cliente.renovado && manejarRenovacion(cliente.id)
+                          }
+                          style={{ cursor: "pointer" }}
+                        />
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
     </>
   );
